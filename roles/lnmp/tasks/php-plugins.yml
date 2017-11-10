@@ -1,0 +1,16 @@
+- name: install libmemcached
+  yum:
+    name: libmemcached
+    state: present
+
+- name: copy memcached.so
+  copy:
+    src: memcached.so
+    dest: /usr/local/php/lib/extensions/no-debug-non-zts-20121212/
+    mode: '0755'
+
+- name: copy redis.so
+  copy:
+    src: redis.so
+    dest: /usr/local/php/lib/extensions/no-debug-non-zts-20121212/
+    mode: '0755'

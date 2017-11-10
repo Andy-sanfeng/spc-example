@@ -1,0 +1,58 @@
+- name: delete example per 45 minutes
+  cron:
+    name: delete example per 45 minutes
+    job: php {{xp_home_dir}}/public/index.php delete example
+    user: root
+    minute: "*/45"
+
+- name: addPhysicalinfo per 10 minutes
+  cron:
+    name: addPhysicalinfo per 10 minutes
+    job: php {{xp_home_dir}}/public/index.php addPhysicalinfo
+    user: root
+    minute: "*/10"
+
+- name: clear cache per 3 hours
+  cron:
+    name: clear cache per 3 hours
+    job: sync;echo 1 > /proc/sys/vm/drop_caches
+    user: root
+    hour: "*/3"
+    minute: "0"
+
+- name: stopTopoVm per 10 minutes
+  cron:
+    name: stopTopoVm per 10 minutes
+    job: php {{xp_home_dir}}/public/index.php stopTopoVm
+    user: root
+    minute: "*/2"
+
+- name: addWarningInfo per 5 minutes
+  cron:
+    name: addWarningInfo per 5 minutes
+    job: php {{xp_home_dir}}/public/index.php addWarningInfo
+    user: root
+    minute: "*/5"
+
+- name: autoDeleteVmVideo per 10 minutes
+  cron:
+    name: autoDeleteVmVideo per 10 minutes
+    job: php {{xp_home_dir}}/public/index.php autoDeleteVmVideo
+    user: root
+    minute: "*/10"
+
+- name: start addPhysicalinfo
+  shell: php {{xp_home_dir}}/public/index.php addPhysicalinfo
+
+- name: copy clear_ovs_dead_port.py
+  copy:
+    src: clear_ovs_dead_port.py
+    dest: /root/install_file/clear_ovs_dead_port.py
+
+- name: clear br0 error port per 1 hours
+  cron:
+    name: clear br0 error port per 1 hours
+    job: python /root/install_file/clear_ovs_dead_port.py
+    user: root
+    hour: "*/1"
+    minute: "0"

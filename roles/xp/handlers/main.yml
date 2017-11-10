@@ -1,0 +1,40 @@
+- name: restart iptables
+  service:
+    name: iptables
+    state: restarted
+
+- name: reload nginx
+  service:
+    name: nginx
+    state: reloaded
+
+- name: set user group and  permission
+  file:
+    name: "{{ xp_home_dir }}"
+    state: directory
+    owner: www
+    group: www
+    mode: '0755'
+    recurse: true
+
+- name: set public/upload user group and  permission
+  file:
+    name: "{{ xp_home_dir }}/public/upload/"
+    state: directory
+    owner: www
+    group: www
+    mode: '0777'
+    recurse: true
+
+- name: restart ntpd
+  service:
+    name: ntpd
+    state: restarted
+
+- name: restart php-fpm
+  service:
+    name: php-fpm
+    state: restarted
+
+- name: restart service_control
+  shell: sh /root/install_file/service_control.sh restart >/dev/null 2>&1

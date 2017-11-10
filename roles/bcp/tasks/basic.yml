@@ -1,0 +1,29 @@
+- name: create /nrtkeys/ directory
+  file:
+    name: /nrtkeys/
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: create /var/pclog/ directory
+  file:
+    name: /var/pclog/
+    state: directory
+
+- name: unzip BCP.zip file
+  unarchive:
+    src: BCP.zip
+    dest: /usr/
+
+- name: set bcpconfig.cfg on master node
+  template:
+    src: bcpconfig_master.cfg
+    dest: /etc/bcpconfig.cfg
+  when: inventory_hostname in groups['master']
+
+- name: set bcpconfig.cfg on slave node
+  template:
+    src: bcpconfig_slave.cfg
+    dest: /etc/bcpconfig.cfg
+  when: inventory_hostname in groups['slave']

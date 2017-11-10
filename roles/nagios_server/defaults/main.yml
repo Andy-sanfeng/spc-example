@@ -1,0 +1,7 @@
+nagios_dbname: nagios
+nagios_dbuser: nagios
+nagios_db_passwd: nagios
+#用来设置nagios中 master 所在主机组的组名，针对不同项目，建议命名为 productname_master，例如spc_master
+nagios_master_group_name: spc_master
+#用来设置nagios中 slave 所在主机组的组名，针对不同项目，建议命名为 productname_slave，例如spc_slave
+nagios_slave_group_name: spc_slave

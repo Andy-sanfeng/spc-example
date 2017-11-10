@@ -1,0 +1,28 @@
+- name: install tigervnc-server
+  yum: name=tigervnc-server state=present
+
+- name: set default runlevel as graphical
+  file:
+    src: /lib/systemd/system/graphical.target
+    dest: /etc/systemd/system/default.target
+    state: link
+
+- name: copy vncserver service file
+  copy:
+    src: vnc/vncserver.service
+    dest: /etc/systemd/system/vncserver@:1.service 
+    mode: '0644'
+
+- name: enable and start vncserver@:1.service
+  service:
+    name: vncserver@:1.service
+    enabled: true
+    state: started
+
+- name: set password for vnc
+  copy:
+    src: vnc/passwd
+    dest: /root/.vnc/passwd
+    mode: '0600'
+  notify:
+    - restart vncserver@:1.service

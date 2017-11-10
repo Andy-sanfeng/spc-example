@@ -1,0 +1,52 @@
+- name: install basic pkgs
+  yum: name={{ item }} state=present
+  with_items:
+    - ncurses
+    - ncurses-devel
+    - yum-utils
+    - rpm-build
+    - redhat-rpm-config
+    - rpmdevtools
+    - libvirt-python
+    - python-devel
+    - autoconf
+    - openvswitch
+    - kmod-openvswitch
+    - vconfig
+
+- name: set python default encoding as utf8
+  copy:
+    src: sitecustomize.py
+    dest: /usr/lib64/python2.7/site-packages/
+    mode: "0644"
+
+- name: import some modules
+  modprobe:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - kvm
+    - openvswitch
+    - xfs
+    - 8021q
+
+- name: test default net
+  shell: virsh net-list --all | grep default | wc -l
+  register: net_default
+
+- name: delete default net
+  shell: virsh net-destroy default; virsh net-undefine default
+  when: net_default.stdout == '1'
+
+- name: copy ovsnet.xml
+  copy:
+    src: ovsnet.xml
+    dest: /tmp/ovsnet.xml
+
+- name: test ovs-br0 net
+  shell: virsh net-list --all | grep ovs-br0 | wc -l
+  register: ovs_default
+
+- name: define a net named ovs-br0
+  shell: virsh net-define /tmp/ovsnet.xml;virsh net-start ovs-br0;virsh net-autostart ovs-br0
+  when: ovs_default.stdout != '1'

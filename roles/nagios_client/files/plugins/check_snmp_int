@@ -1,0 +1,45 @@
+#!/usr/bin/python
+#_*_coding: utf-8_*_
+
+import sys
+import netsnmp
+
+STATE_OK=0  
+STATE_WARNING=1  
+STATE_CRITICAL=2  
+STATE_UNKNOWN=3
+
+def help():
+  print '''Usage:
+sys.argv[0] '''
+
+try:
+  session = netsnmp.Session(Version=2, Community=sys.argv[1], DestHost=sys.argv[2])
+except IndexError:
+  help()
+  sys.exit()
+
+oid01 = netsnmp.Varbind('ifOperStatus')
+oid02 = netsnmp.Varbind('ifDescr')
+oidlist01 = netsnmp.VarList(oid01)
+oidlist02 = netsnmp.VarList(oid02)
+rl01 = session.walk(oidlist01)
+rl02 = session.walk(oidlist02)
+
+'''1=>UP,2=>DOWN,3=>TESTING,4=>UNKNOWN,5=>DORMANT,6=>NotPresent,7=>lowerLayerDown'''
+
+
+status = dict(zip(rl02,rl01))[sys.argv[3]]
+if status == '1':
+  print '%s is OK ' % (sys.argv[3])
+  sys.exit(STATE_OK)
+elif status == '2':
+  print '%s is DOWN' % (sys.argv[3])
+  sys.exit(STATE_CRITICAL)
+elif status == '4':
+  print '%s is UNKNOWN' % (sys.argv[3])
+  sys.exit(STATE_WARNING)
+else:
+  print '%s is UNKNOWN ' % (sys.argv[3])
+  sys.exit(STATE_WARNING)
+

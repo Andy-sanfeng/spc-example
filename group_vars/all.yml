@@ -1,0 +1,20 @@
+# 项目使用数据库的名称
+database_name: spc
+# 数据库普通用户名称
+db_user: simple
+# PHP代码所在根目录
+xp_home_dir: /home/www/Spc/
+# 项目初始化数据库所使用脚本的名称
+sql_file_name: database.sql
+# 项目组PHP代码包的名称
+product_name: spc.zip
+# nginx配置文件 在svn库中的名称
+ori_nginx_php_file: nginx_spc.conf
+# 部署完以后nginx 配置文件名称
+nginx_php_file: spc.conf
+local_php: local.php
+global_php: global.php
+# 数据库 root 密码，不要修改
+root_db_passwd: Qz09My7VOjH@Z_6Z
+# 数据库 普通用户密码，不要修改
+user_db_passwd: 6Ou_FkDq$0u@7U3s

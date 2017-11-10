@@ -1,0 +1,44 @@
+- name: create nagios database
+  mysql_db:
+    name: '{{ nagios_dbname }}'
+    state: present
+    login_user: root
+    login_host: localhost
+    login_password: '{{ root_db_passwd}}'
+
+- name: add nagios@'localhost'
+  mysql_user:
+    name: '{{ nagios_dbuser }}'
+    password: '{{ nagios_db_passwd}}'
+    host: 'localhost'
+    priv: "{{ nagios_dbname }}.*:ALL"
+    login_user: root
+    login_host: localhost
+    login_password: '{{ root_db_passwd}}'
+
+- name: add nagios@'%'
+  mysql_user:
+    name: '{{ nagios_dbuser }}'
+    password: '{{ nagios_db_passwd}}'
+    host: '%'
+    priv: "{{ nagios_dbname }}.*:ALL"
+    login_user: root
+    login_host: localhost
+    login_password: '{{ root_db_passwd}}'
+
+- name: copy mysql.sql
+  copy:
+    src: mysql.sql
+    dest: /root/install_file/mysql.sql
+    mode: '0755'
+
+- name: copy installdb
+  copy:
+    src: installdb
+    dest: /root/install_file/installdb
+    mode: '0755'
+  register: nagios_installdb
+
+- name: import database nagios
+  shell: chdir=/root/install_file/ ./installdb -u '{{ nagios_dbuser }}' -p '{{ nagios_db_passwd}}' -d '{{ nagios_dbname }}'
+  when: nagios_installdb.changed

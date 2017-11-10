@@ -1,0 +1,44 @@
+- name: create simple user
+  user:
+    name: simple
+    state: present
+
+- name: copy /etc/rsyncd.secrets
+  copy:
+    src: rsync_master/rsyncd.secrets
+    dest: /etc/rsyncd.secrets
+    mode: '0600'
+  when: inventory_hostname in groups['master']
+
+- name: copy /etc/rsync.secrets
+  copy:
+    src: rsync_master/rsync.secrets
+    dest: /etc/rsync.secrets
+    mode: '0600'
+  when: inventory_hostname in groups['master']
+
+- name: copy /etc/rsyncd.conf
+  copy:
+    src: rsync_master/rsyncd.conf
+    dest: /etc/rsyncd.conf
+  when: inventory_hostname in groups['master']
+
+- name: copy /etc/rsyncd.secrets
+  copy:
+    src: rsync_slave/rsyncd.secrets
+    dest: /etc/rsyncd.secrets
+    mode: '0600'
+  when: inventory_hostname in groups['slave']
+
+- name: copy /etc/rsync.secrets
+  copy:
+    src: rsync_slave/rsync.secrets
+    dest: /etc/rsync.secrets
+    mode: '0600'
+  when: inventory_hostname in groups['slave']
+
+- name: copy /etc/rsyncd.conf
+  copy:
+    src: rsync_slave/rsyncd.conf
+    dest: /etc/rsyncd.conf
+  when: inventory_hostname in groups['slave']

@@ -1,0 +1,18 @@
+- name: copy ZendGuardLoader.so
+  copy:
+    src: ZendGuardLoader/ZendGuardLoader.so
+    dest: /usr/local/php/lib/extensions/no-debug-non-zts-20121212/ZendGuardLoader.so
+    mode: '0755'
+
+- name: insert ZendGuardLoader extension in php.ini
+  lineinfile:
+    dest: /usr/local/php/etc/php.ini
+    line: "{{ item }}"
+    state: present
+  with_items:
+    - zend_extension=ZendGuardLoader.so
+    - zend_loader.enable=1
+    - zend_loader.disable_licensing=0
+    - zend_loader.obfuscation_level_support=3
+  notify:
+    - restart php-fpm

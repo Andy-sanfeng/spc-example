@@ -1,0 +1,29 @@
+- name: restart mysqld
+  service:
+    name: mysqld
+    state: restarted
+
+- name: reload nginx
+  service:
+    name: nginx
+    state: reloaded
+
+- name: restart php-fpm
+  service:
+    name: php-fpm
+    state: restarted
+
+- name: restart redis
+  service:
+    name: redis
+    state: restarted
+
+- name: reload service
+  command: systemctl daemon-reload
+
+- name: set primission for nginx
+  file:
+    name: /var/lib/nginx/
+    state: directory
+    mode: '0775'
+    recurse: true

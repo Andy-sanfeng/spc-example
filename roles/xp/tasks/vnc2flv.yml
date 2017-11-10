@@ -1,0 +1,10 @@
+- name: unzip vnc2flv.zip
+  unarchive:
+    src: vnc2flv.zip
+    dest: /usr/
+    creates: /usr/vnc2flv/
+  register: vnc2flv_result
+
+- name: install vnc2flv
+  shell: chdir=/usr/vnc2flv/ python setup.py install
+  when: vnc2flv_result.changed

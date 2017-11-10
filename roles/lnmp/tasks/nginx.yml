@@ -1,0 +1,26 @@
+- name: install nginx
+  yum:
+    name: nginx
+    state: present
+
+- name: set /var/lib/nginx/ 775
+  file:
+    name: /var/lib/nginx/
+    state: directory
+    mode: '0775'
+    recurse: true
+  notify:
+    - set primission for nginx
+
+- name: copy nginx.conf
+  template:
+    src: nginx.conf
+    dest: /etc/nginx/nginx.conf
+  notify: 
+    - reload nginx
+
+- name: enable nginx service
+  service:
+    name: nginx
+    state: started
+    enabled: yes

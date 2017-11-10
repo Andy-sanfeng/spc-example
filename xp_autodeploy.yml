@@ -1,0 +1,50 @@
+- hosts: all
+  vars_prompt:
+    - name: "network1_if"
+      prompt: "请输入网络1(管理网络)的网卡名称"
+      default: "eth0"
+      private: false
+    - name: "network3_if"
+      prompt: "请输入网络2(OVS br0 虚拟机数据网口)的网卡名称"
+      default: "eth2"
+      private: false
+    - name: "customcode"
+      prompt: "请输入设备编码"
+      default: "0000"
+      private: false
+    - name: "alert_email"
+      prompt: "请输入监控管理者邮箱"
+      private: false
+    - name: "productname"
+      prompt: "请输入您自定义的产品名称"
+      default: "SimpleSPC信息安全云实验系统"
+      private: false
+    - name: "companyname"
+      prompt: "请输入贵公司的名称，将会在web界面展示"
+      default: "<a href='/base/user/about' target='_blank'>关于</a>&nbsp;|<a href='http://www.shiyanbar.com/' target='_blank'>实验吧</a>&nbsp;|<a href='http://www.simpleware.com.cn/' target='_blank'>西普教育</a>&nbsp;"
+      private: false
+  roles:
+    - { role: init }
+  tasks:
+    - set_fact:
+        net1_if: "{{ network1_if }}"
+        net3_if: "{{ network3_if }}"
+        custom_code: "{{ customcode }}"
+        email_address: "{{ alert_email }}"
+        self_product_name: "{{ productname }}"
+        company_name: "{{ companyname }}"
+
+- hosts: all
+  roles:
+    - { role: lnmp }
+    - { role: common }
+    - { role: bcp }
+    - { role: xp }
+
+- hosts: nagios-server
+  roles:
+    - { role: nagios_server }
+
+- hosts: nagios-client
+  roles:
+    - { role: nagios_client }

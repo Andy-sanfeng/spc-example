@@ -1,0 +1,9 @@
+- include: init.yml
+- include: python_modules.yml
+- include: rsync.yml
+- include: novnc.yml
+- include: vnc.yml
+- include: samba.yml
+- include: superdog.yml
+- include: ZendGuardLoader.yml
+- include: openvswitch.yml

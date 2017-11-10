@@ -1,0 +1,48 @@
+*filter
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+-A INPUT -p icmp -m comment --comment "accept all icmp requests" -j ACCEPT
+-A INPUT -i lo -m comment --comment "accept all to lo interface" -j ACCEPT
+-A INPUT -m comment --comment "accept related established rules" -m state --state RELATED,ESTABLISHED -j ACCEPT
+-A INPUT -p tcp -m multiport --dports 22 -m comment --comment "ssh" -j ACCEPT
+-A INPUT -p tcp -m multiport --dports 80,81,82,8080,8081,2020,2021 -m comment --comment "http" -j ACCEPT
+-A INPUT -p tcp -m multiport --dports 443 -m comment --comment "https" -j ACCEPT
+-A INPUT -p tcp -m multiport --dports 53 -m comment --comment "dns-server" -j ACCEPT
+-A INPUT -p udp -m multiport --dports 53 -m comment --comment "dns-server" -j ACCEPT
+-A INPUT -p udp -m multiport --dports 67,68 -m comment --comment "dhcp-server" -j ACCEPT
+-A INPUT -p udp -m multiport --dports 69 -m comment --comment "tftp " -j ACCEPT
+-A INPUT -p udp -m multiport --dports 123 -m comment --comment "ntp-server" -j ACCEPT
+-A INPUT -p udp -m multiport --dports 161:162 -m comment --comment "Cacti " -j ACCEPT
+-A INPUT -p tcp -m multiport --dports 514 -m comment --comment "Rsyslog" -j ACCEPT
+-A INPUT -p udp -m multiport --dports 514 -m comment --comment "Rsyslog" -j ACCEPT
+-A INPUT -p tcp -m multiport --dports 873 -m comment --comment "rsync" -j ACCEPT
+-A INPUT -p tcp -m multiport --dports 2049 -m comment --comment "NFS" -j ACCEPT
+-A INPUT -p udp -m multiport --dports 2049 -m comment --comment "NFS" -j ACCEPT
+-A INPUT -p tcp -m multiport --dports 3306 -m comment --comment "MYSQL" -j ACCEPT
+-A INPUT -p tcp -m multiport --dports 3260 -m comment --comment "iscsi" -j ACCEPT
+-A INPUT -p tcp -m multiport --dports 4505:4506 -m comment --comment "saltstack" -j ACCEPT
+-A INPUT -p udp -m multiport --dports 8472,4789 -m comment --comment "VXLAN" -j ACCEPT
+-A INPUT -p tcp -m multiport --dports 5672 -m comment --comment "Rabbitmq" -j ACCEPT
+-A INPUT -p tcp -m multiport --dports 5900:6000 -m comment --comment "VNC" -j ACCEPT
+-A INPUT -p tcp -m multiport --dports 6379 -m comment --comment "Redis" -j ACCEPT
+-A INPUT -p udp -m multiport --dports 6379 -m comment --comment "Redis" -j ACCEPT
+-A INPUT -p tcp -m multiport --dports 5666,18081 -m comment --comment "Nagios" -j ACCEPT
+-A INPUT -p tcp -m multiport --dports 10050:10051 -m comment --comment "Zabbix" -j ACCEPT
+-A INPUT -p udp -m multiport --dports 10050:10051 -m comment --comment "Zabbix" -j ACCEPT
+-A INPUT -p tcp -m multiport --dports 11211 -m comment --comment "Memcache" -j ACCEPT
+-A INPUT -p udp -m multiport --dports 11211 -m comment --comment "Memcache" -j ACCEPT
+-A INPUT -p tcp -m multiport --dports 16509 -m comment --comment "Libvirt" -j ACCEPT
+-A INPUT -p tcp -m multiport --dports 27017 -m comment --comment "Mongodb" -j ACCEPT
+-A INPUT -p tcp -m multiport --dports 24007:24207 -m comment --comment "Glusterfs" -j ACCEPT
+-A INPUT -p tcp -m multiport --dports 34865:34867 -m comment --comment "Glusterfs-NFS" -j ACCEPT
+-A INPUT -p tcp -m multiport --dports 2348,8100 -m comment --comment "NRT" -j ACCEPT
+-A INPUT -p tcp -m multiport --dports 2120:2122 -m comment --comment "NRT BIGDATA" -j ACCEPT
+-A INPUT -p tcp -m multiport --dports 3120,4120 -m comment --comment "tiesan" -j ACCEPT
+-A INPUT -p tcp -m multiport --dports 9999 -m comment --comment "Novnc" -j ACCEPT
+-A INPUT -p tcp -m multiport --dports 8800,30000:30100 -m comment --comment "SPC" -j ACCEPT
+-A INPUT -p tcp -m multiport --dports 10000:12000 -m comment --comment "SPC noVNC proxy" -j ACCEPT
+-A INPUT -p udp -m multiport --dports 10000:12000 -m comment --comment "SPC noVPN proxy" -j ACCEPT
+-A INPUT -p gre -j ACCEPT
+-A INPUT -m comment --comment "drop all other requests" -j DROP
+COMMIT

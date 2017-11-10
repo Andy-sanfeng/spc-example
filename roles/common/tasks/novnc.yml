@@ -1,0 +1,13 @@
+- name: create /home/novnc_tokens
+  file:
+    name: /home/novnc_tokens/
+    state: directory
+    owner: root
+    group: root
+    mode: '0666'
+
+- name: unzip noVNC-0.5.zip
+  unarchive:
+    src: noVNC-0.5.zip
+    dest: /home/
+    creates: /home/noVNC-0.5/

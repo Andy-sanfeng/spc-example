@@ -1,0 +1,19 @@
+- name: restart httpd
+  service:
+    name: httpd
+    state: restarted
+
+- name: restart snmpd 
+  service:
+    name: snmpd
+    state: restarted
+
+- name: restart nagios
+  service:
+    name: nagios
+    state: restarted
+
+- name: restart ndo2db
+  service:
+    name: ndo2db
+    state: restarted

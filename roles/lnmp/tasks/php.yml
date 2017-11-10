@@ -1,0 +1,63 @@
+- name: install php pkgs
+  yum: name={{ item }} state=present
+  with_items:
+    - php-5.5.28-1.el7.centos
+    - gcc
+    - gcc-c++
+    - autoconf
+    - openssl-devel
+    - swig
+    - libjpeg-turbo
+    - libjpeg-turbo-devel
+    - libpng
+    - libpng-devel
+    - freetype
+    - freetype-devel
+    - libxml2
+    - libxml2-devel
+    - zlib
+    - zlib-devel
+    - libcurl
+    - libcurl-devel
+    - libmcrypt
+    - mhash
+    - mcrypt
+
+- name: add php into PATH
+  lineinfile:
+    dest: /etc/profile
+    line: "export PATH=$PATH:/usr/local/php/bin"
+    state: present
+
+- name: link /usr/bin/php to /usr/local/php/bin/php
+  file:
+    src: /usr/local/php/bin/php
+    dest: /usr/bin/php
+    state: link
+
+- name: set php.ini
+  copy:
+    src: php.ini-production
+    dest: /usr/local/php/etc/php.ini 
+    owner: root
+    group: root
+    mode: '0644'
+  notify: 
+    - restart php-fpm
+
+- name: set php-fpm.conf
+  copy:
+    src: php-fpm.conf.default
+    dest: /usr/local/php/etc/php-fpm.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: 
+    - restart php-fpm
+
+
+- name: enable php-fpm
+  service:
+    name: php-fpm
+    enabled: true
+    state: started

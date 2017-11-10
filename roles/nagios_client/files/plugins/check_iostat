@@ -1,0 +1,63 @@
+#!/bin/sh
+
+iostat=`which iostat 2>/dev/null`
+bc=`which bc 2>/dev/null`
+
+function help {
+echo -e "\n\tThis plugin shows the I/O percentage usage of the specified disk, using the iostat external program.\n\n$0:\n\t-d <disk>\t\tDevice to be checked (without the full path, eg. sda)\n\t-c <utilization>\tSets the CRITICAL percentage for disk I/O bandwidth utilization , respectively\n\t-w <utilization>\tSets the WARNING percentage for disk I/O bandwidth utilization , respectively\n"
+	exit -1
+}
+
+# Ensuring we have the needed tools:
+( [ ! -f $iostat ] || [ ! -f $bc ] ) && \
+	( echo "ERROR: You must have iostat and bc installed in order to run this plugin" && exit -1 )
+
+# Getting parameters:
+while getopts "d:w:c:h" OPT; do
+	case $OPT in
+		"d") disk=$OPTARG;;
+		"w") warning=$OPTARG;;
+		"c") critical=$OPTARG;;
+		"h") help;;
+	esac
+done
+
+# Adjusting the three warn and crit levels:
+crit_util=`echo $critical | cut -d, -f1`
+warn_util=`echo $warning | cut -d, -f1`
+
+
+# Checking parameters:
+[ ! -b "/dev/$disk" ] && echo "ERROR: Device incorrectly specified" && help
+
+( [ "$warn_util" == "" ] || [ "$crit_util" == "" ] ) &&
+	echo "ERROR: You must specify all warning and critical levels" && help
+
+	
+if [ `expr $crit_util \> $warn_util` -eq 0 ];then
+	echo "ERROR: critical levels must be highter than warning levels"
+	help
+fi
+	
+
+# Doing the actual check:
+util=`$iostat -x $disk | grep $disk | awk '{print $NF}'`
+
+# Comparing the result and setting the correct level:
+if [ `echo "$util > $crit_util"| bc` -eq 1 ];then
+        msg="CRITICAL"
+        status=2
+else if [ `echo "$util > $warn_util"| bc` -eq 1 ];then
+        	msg="WARNING"
+        	status=1
+     else
+        msg="OK"
+        status=0
+     fi
+fi
+
+# Printing the results:
+echo "$msg - $disk I/O bandwidth utilization is $util| 'disk I/O'=$util;$warning;$critical;"
+
+# Bye!
+exit $status

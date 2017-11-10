@@ -1,0 +1,23 @@
+- name: install superdog
+  yum: name=superdog state=present
+
+- name: copy /usr/lib64/libdog_linux_x86_64_3149185.so
+  copy:
+    src: superdog/libdog_linux_x86_64_3149185.so
+    dest: /usr/lib64/libdog_linux_x86_64_3149185.so
+    mode: '0755'
+
+- name: copy libdogauthsrvphp_x86_64.so
+  copy:
+    src: superdog/libdogauthsrvphp_x86_64.so
+    dest: /usr/local/php/lib/extensions/no-debug-non-zts-20121212/libdogauthsrvphp_x86_64.so
+    mode: '0755'
+
+- name: insert libdog extension in php.ini
+  lineinfile:
+    dest: /usr/local/php/etc/php.ini
+    line: "extension=libdogauthsrvphp_x86_64.so"
+    state: present
+  notify:
+    - restart php-fpm
+

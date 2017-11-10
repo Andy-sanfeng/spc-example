@@ -1,0 +1,27 @@
+- name: exist bridge br0 and br1
+  openvswitch_bridge:
+    bridge: "{{ item }}"
+    state: present
+  with_items:
+    - br0
+    - br1
+
+- name: start and enable openvswitch
+  service:
+    name: openvswitch
+    enabled: true
+    state: started
+
+- name: add "{{ net3_if }}" into bridge br0
+  openvswitch_port:
+    bridge: br0
+    port: "{{ net3_if }}"
+    state: present
+
+- name: test if priority=0 on br0
+  shell: ovs-ofctl dump-flows br0 | grep 'priority=0 actions=NORMAL' | wc -l
+  register: ofctl_br0_priority
+
+- name: add flow priority=0 on br0
+  shell: ovs-ofctl add-flow br0 priority=0,actions=normal
+  when: ofctl_br0_priority.stdout != '1'

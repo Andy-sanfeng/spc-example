@@ -1,0 +1,5 @@
+- name: modify company name
+  shell: php {{ xp_home_dir }}/public/index.php changePname "{{ self_product_name }}" "{{ company_name}}"
+
+- name: backup Logo files
+  shell: php {{ xp_home_dir }}/public/index.php changeLogo 2

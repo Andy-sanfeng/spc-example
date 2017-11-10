@@ -1,0 +1,14 @@
+- include: init.yml
+- include: db.yml
+- include: config.yml
+
+- name: enable and start service  httpd snmpd nagios ndo2db
+  service:
+    name: '{{ item }}'
+    enabled: true
+    state: started
+  with_items:
+    - httpd
+    - snmpd
+    - nagios
+    - ndo2db

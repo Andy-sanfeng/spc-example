@@ -1,0 +1,7 @@
+- include: mysql.yml
+- include: nginx.yml
+- include: mysql_db.yml
+- include: php.yml
+- include: php-plugins.yml
+- include: redis.yml
+- include: memcached.yml

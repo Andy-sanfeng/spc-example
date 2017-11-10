@@ -1,0 +1,6 @@
+- name: install samba pkgs
+  yum: name={{ item }} state=present
+  with_items:
+    - samba
+    - samba-client
+    - samba-common

@@ -1,0 +1,20 @@
+- name: install nagios pkgs
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - perl-DBD-MySQL
+    - mysql-community-devel-5.5.49-2.el7
+    - nagios
+    - ndoutils
+    - nagios-plugins
+    - nagios-plugins-all
+    - nagios-plugins-nrpe
+    - net-snmp-python
+    - net-snmp
+
+- name: sendEmail file for nagios
+  copy:
+    src: sendEmail 
+    dest: /usr/local/bin/sendEmail
+    mode: '0755'

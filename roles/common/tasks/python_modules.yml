@@ -1,0 +1,27 @@
+- name: remove some pip pkgs
+  yum: name={{ item }} state=absent
+  with_items:
+    - python-inotify-0.9.4-4.el7
+
+- name: install pip pkgs
+  yum: name={{ item }} state=present
+  with_items:
+    - python-pip
+    - python-devel
+    - libxslt-devel
+    - CherryPy-8.1.0-1
+    - mysql-connector-2.1.4-1
+    - psutil-4.3.1-1
+    - pyinotify-0.9.6-1
+    - pytz-2017.2-1
+    - setuptools_scm-1.15.0-1
+    - soaplib-1.0.0-1
+    - suds-0.4-1
+
+- name: copy pip-modules
+  copy:
+    src: modules/
+    dest: /root/install_file/modules/
+
+- name: pip install modules
+  shell: chdir=/root/install_file/modules/ pip install *

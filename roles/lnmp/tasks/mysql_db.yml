@@ -1,0 +1,75 @@
+- name: set root user's password for localhost
+  mysql_user:
+    name: 'root'
+    password: "{{ root_db_passwd }}"
+    host: 'localhost'
+    check_implicit_admin: yes
+    login_user: root
+    login_host: localhost
+    login_password: "{{ root_db_passwd }}"
+
+- name: set root user's password for 127.0.0.1
+  mysql_user:
+    name: 'root'
+    password: "{{ root_db_passwd }}"
+    host: '127.0.0.1'
+    login_user: root
+    login_host: localhost
+    login_password: "{{ root_db_passwd }}"
+
+- name: set root user's password for local IP
+  mysql_user:
+    name: 'root'
+    password: "{{ root_db_passwd }}"
+    host: "{{ hostvars[inventory_hostname]['ansible_' + net1_if]['ipv4']['address'] }}"
+    login_user: root
+    login_host: localhost
+    login_password: "{{ root_db_passwd }}"
+
+- name: create database
+  mysql_db:
+    name: '{{ database_name }}'
+    state: present
+    login_user: root
+    login_host: localhost
+    login_password: "{{ root_db_passwd }}"
+
+- name: add user for localhost
+  mysql_user:
+    name: '{{ db_user }}'
+    password: "{{ user_db_passwd }}"
+    host: 'localhost'
+    priv: "{{ database_name }}.*:ALL"
+    login_user: root
+    login_host: localhost
+    login_password: "{{ root_db_passwd }}"
+
+- name: add user for %
+  mysql_user:
+    name: '{{ db_user }}'
+    password: "{{ user_db_passwd }}"
+    host: '%'
+    priv: "{{ database_name }}.*:ALL"
+    login_user: root
+    login_host: localhost
+    login_password: "{{ root_db_passwd }}"
+
+- name: add user for 127.0.0.1
+  mysql_user:
+    name: '{{ db_user }}'
+    password: "{{ user_db_passwd }}"
+    host: '127.0.0.1'
+    priv: "{{ database_name }}.*:ALL"
+    login_user: root
+    login_host: localhost
+    login_password: "{{ root_db_passwd }}"
+
+- name: add user for local IP
+  mysql_user:
+    name: '{{ db_user }}'
+    password: "{{ user_db_passwd }}"
+    host: "{{ hostvars[inventory_hostname]['ansible_' + net1_if]['ipv4']['address'] }}"
+    priv: "{{ database_name }}.*:ALL"
+    login_user: root
+    login_host: localhost
+    login_password: "{{ root_db_passwd }}"

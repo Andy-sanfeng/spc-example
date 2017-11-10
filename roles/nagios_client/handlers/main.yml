@@ -1,0 +1,11 @@
+- name: restart snmpd
+  service:
+    name: snmpd
+    enabled: true
+    state: restarted
+
+- name: restart nrpe
+  service:
+    name: nrpe
+    enabled: true
+    state: restarted

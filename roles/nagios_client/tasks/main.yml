@@ -1,0 +1,42 @@
+- name: install nrpe pkgs
+  yum:
+    name: '{{ item }}'
+    state: present
+  with_items:
+    - nrpe
+    - nagios-plugins-all
+    - net-snmp-python
+    - net-snmp
+
+- name: copy check_files
+  copy:
+    src: plugins/
+    dest: /usr/lib64/nagios/plugins/
+    mode: '0755'
+  notify:
+    - restart nrpe
+
+- name: copy nrpe.cfg
+  template:
+    src: nrpe.cfg
+    dest: /etc/nagios/nrpe.cfg
+    mode: '0644'
+  notify:
+    - restart nrpe
+
+- name: copy snmpd.conf
+  copy:
+    src: snmpd.conf
+    dest: /etc/snmp/snmpd.conf
+    mode: '0600'
+  notify:
+    - restart snmpd
+
+- name: enable and start snmpd nrpe
+  service:
+    name: '{{ item }}'
+    enabled: true
+    state: started
+  with_items:
+    - snmpd
+    - nrpe

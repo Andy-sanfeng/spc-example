@@ -1,0 +1,9 @@
+- name: restart vncserver@:1.service
+  service:
+    name: vncserver@:1.service
+    state: restarted
+
+- name: restart php-fpm
+  service:
+    name: php-fpm
+    state: restarted

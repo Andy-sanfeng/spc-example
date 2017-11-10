@@ -1,0 +1,61 @@
+- name: set hostname
+  hostname:
+    name: '{{ hostname }}'
+
+- name: create /root/install_file/
+  file: 
+    name: /root/install_file/
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: create www group
+  group:
+    name=www 
+    state=present
+    system=yes
+
+- name: create www user
+  user: 
+    name: www
+    state: present
+    group: www
+    password: '$1$F/Ub/VTv$pCQPsDwQ7iDj6warxoYzG/'
+    shell: /bin/bash
+    system: yes
+
+- name: give www user sudo privileges
+  lineinfile:
+    dest: /etc/sudoers
+    line: "www        ALL=(ALL)       NOPASSWD: ALL"
+    state: present
+    
+- name: set net.ipv4.ip_forward=1
+  sysctl:
+    name: "net.ipv4.ip_forward"
+    value: 1
+    state: present
+
+- name: set net.ipv4.conf.all.rp_filter=0
+  sysctl:
+    name: "net.ipv4.conf.all.rp_filter"
+    value: 0
+    state: present
+
+- name: set net.ipv4.conf.default.rp_filter=0
+  sysctl:
+    name: "net.ipv4.conf.default.rp_filter"
+    value: 0
+    state: present
+
+- name: set fs.inotify.max_user_watches=163840
+  sysctl:
+    name: "fs.inotify.max_user_watches"
+    value: 163840
+    state: present
+
+- name: chmod +x /etc/rc.d/rc.local
+  file:
+    dest: /etc/rc.d/rc.local
+    mode: '0755'

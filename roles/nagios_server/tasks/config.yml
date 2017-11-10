@@ -1,0 +1,69 @@
+- name: remove unuse files
+  file:
+    dest: '/etc/nagios/objects/{{ item }}'
+    state: absent
+  with_items:
+    - windows.cfg
+    - printer.cfg
+    - switch.cfg
+    - localhost.cfg
+
+- name: copy objects files
+  template:
+    src: 'objects/{{ item }}'
+    dest: '/etc/nagios/objects/{{ item }}'
+    mode: '0644'
+  with_items:
+    - commands.cfg
+    - templates.cfg
+    - timeperiods.cfg
+    - contacts.cfg
+    - hosts.cfg
+    - nagios_client.cfg
+    - nagios_server.cfg
+  notify:
+    - restart nagios
+    - restart ndo2db
+  
+- name: copy files
+  copy:
+    src: '{{ item.name }}'
+    dest: '{{ item.dest }}'
+    mode: '{{ item.mode }}'
+  with_items:
+    - { name: 'httpd.conf', dest: '/etc/httpd/conf/', mode: '0644'}
+    - { name: 'libphp5.so', dest: '/etc/httpd/modules/', mode: '0755'}
+    - { name: '10-php.conf', dest: '/etc/httpd/conf.modules.d/', mode: '0644'}
+    - { name: 'snmpd.conf', dest: '/etc/snmp/', mode: '0600'}
+  notify:
+    - restart httpd
+    - restart snmpd
+
+- name: set nagios.cfg
+  template:
+    src: '{{ item }}'
+    dest: /etc/nagios/
+    mode: '0644'
+  with_items:
+    - nagios.cfg
+    - ndo2db.cfg
+    - ndomod.cfg
+  notify:
+    - restart nagios
+    - restart ndo2db
+
+- name: copy check_files
+  copy:
+    src: plugins/
+    dest: /usr/lib64/nagios/plugins/
+    mode: '0755'
+  notify:
+    - restart nagios
+    - restart ndo2db
+
+- name: set /var/run/ndoutils primission 
+  file:
+    dest: /var/run/ndoutils/
+    state: directory
+    owner: nagios
+    group: nagios

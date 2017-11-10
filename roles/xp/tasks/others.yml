@@ -1,0 +1,67 @@
+- name: set /etc/sysconfig/iptables
+  template:
+    src: iptables
+    dest: /etc/sysconfig/iptables
+    mode: '0600'
+  notify:
+    - restart iptables
+
+- name: create /mnt/target1/vmvedio/ directory
+  file:
+    name: /mnt/target1/vmvedio/
+    state: directory
+    mode: '0777'
+
+- name: set ntp.conf
+  template:
+    src: ntp.conf
+    dest: /etc/ntp.conf
+    mode: '0644'
+  notify:
+    - restart ntpd
+  when: inventory_hostname in groups['slave']
+
+- name: enable and start ntpd service
+  service:
+    name: ntpd
+    enabled: true
+    state: started
+  when: inventory_hostname in groups['slave']
+
+- name: service_control.sh on master
+  template:
+    src: service_control_master.sh
+    dest: /root/install_file/service_control.sh
+    mode: '0755'
+  notify:
+    - restart service_control
+  when: inventory_hostname in groups['master']
+
+- name: service_control.sh on slave
+  template:
+    src: service_control_slave.sh
+    dest: /root/install_file/service_control.sh
+    mode: '0755'
+  notify:
+    - restart service_control
+  when: inventory_hostname in groups['slave']
+
+- name: add service_control.sh into /etc/rc.d/rc.local on master
+  lineinfile:
+    dest: /etc/rc.d/rc.local
+    line: "{{ item }}"
+    state: present
+  with_items:
+    - sleep 30
+    - sh /root/install_file/service_control.sh restart >/dev/null 2>&1
+  when: inventory_hostname in groups['master']
+
+- name: add service_control.sh into /etc/rc.d/rc.local on slaves
+  lineinfile:
+    dest: /etc/rc.d/rc.local
+    line: "{{ item }}"
+    state: present
+  with_items:
+    - sleep 60
+    - sh /root/install_file/service_control.sh restart >/dev/null 2>&1
+  when: inventory_hostname in groups['slave']

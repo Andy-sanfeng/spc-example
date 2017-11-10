@@ -1,0 +1,17 @@
+- name: install redis
+  yum:
+    name: redis
+    state: present
+
+- name: copy redis.conf
+  copy:
+    src: redis.conf
+    dest: /etc/redis.conf
+  notify: 
+    - restart redis
+
+- name: enable redis service
+  service:
+    name: redis
+    state: started
+    enabled: yes

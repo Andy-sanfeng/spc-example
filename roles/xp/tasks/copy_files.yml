@@ -1,0 +1,69 @@
+- name: create the home directory
+  file:
+    name: "{{ xp_home_dir }}"
+    state: directory
+    owner: www
+    group: www
+    mode: '0755'
+    recurse: true
+
+#- name: unzip spc.zip
+#  unarchive:
+#    src: spc.zip
+#    dest: "{{ xp_home_dir }}"
+#    mode: '0755'
+#    owner: www
+#    group: www
+#  notify:
+#    - set user group and  permission
+#    - set public/uoload user group and  permission
+  
+- name: copy the product package
+  copy:
+    src: "{{ product_name }}"
+    dest: /root/install_file/
+  register: spc_tag
+
+- name: unzip the product 
+  shell: chdir=/root/install_file/ unzip -q -o "{{ product_name }}" -d "{{ xp_home_dir }}"
+  when: spc_tag.changed
+  notify:
+    - set user group and  permission
+    - set public/upload user group and  permission
+
+- name: import db
+  shell: removes={{ xp_home_dir }}/migration/{{ sql_file_name }} mysql -uroot -p"{{ root_db_passwd }}" "{{ database_name }}" < "{{ xp_home_dir }}/migration/{{ sql_file_name }}"
+
+- name: rm db script
+  file: 
+     path: "{{ xp_home_dir }}/migration/{{ sql_file_name }}" 
+     state: absent
+
+- name: nginx configure for PHP
+  template:
+    src: "{{ ori_nginx_php_file }}"
+    dest: "/etc/nginx/conf.d/{{ nginx_php_file }}"
+  notify:
+    - reload nginx
+    - restart php-fpm
+
+- name: config local php
+  template:
+    src: "{{ local_php }}"
+    dest: "{{ xp_home_dir }}/config/autoload/{{ local_php }}"
+  notify:
+    - reload nginx
+    - restart php-fpm
+
+- name: config global php
+  template:
+    src: "{{ global_php }}"
+    dest: "{{ xp_home_dir }}/config/autoload/{{ global_php }}"
+  notify:
+    - reload nginx
+    - restart php-fpm
+
+- name: copy deploy_slave.sh
+  copy:
+    src: deploy_slave.sh
+    dest: /root/install_file/deploy_slave.sh

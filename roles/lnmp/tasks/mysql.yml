@@ -1,0 +1,28 @@
+- name: install mysql pkgs
+  yum: name={{ item }} state=present
+  with_items:
+    - mysql-community-server-5.5.49-2.el7
+    - mysql-community-client-5.5.49-2.el7
+    - mysql-community-devel-5.5.49-2.el7
+    - MySQL-python
+
+- name: create directory /etc/my.cnf.d
+  file:
+    name: /etc/my.cnf.d
+    state: directory
+    owner: mysql
+    group: mysql
+    mode: '0755'
+
+- name: set my.cnf
+  template:
+    src: my.cnf
+    dest: /etc/my.cnf
+  notify:
+    - restart mysqld
+
+- name: enable mysqld service
+  service:
+    name: mysqld
+    enabled: yes
+    state: started

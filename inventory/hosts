@@ -1,0 +1,9 @@
+[master]
+
+[slave]
+
+[nagios-server:children]
+master
+
+[nagios-client:children]
+slave

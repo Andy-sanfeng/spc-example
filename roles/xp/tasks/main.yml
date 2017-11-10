@@ -1,0 +1,6 @@
+- include: copy_files.yml
+- include: vnc2flv.yml
+- include: crontab.yml
+- include: others.yml
+- include: RemoteMaintenance.yml
+- include: post.yml
